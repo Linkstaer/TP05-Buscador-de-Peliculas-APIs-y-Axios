@@ -1,5 +1,5 @@
-const ErrorMessage = ({ message }) => (
-  <div className="error-container">
-    <p>⚠️ {message}</p>
-  </div>
-);
+const ErrorMessage = ({ message }) => {
+  return <div className="error-message">⚠️ {message}</div>;
+};
+
+export default ErrorMessage;

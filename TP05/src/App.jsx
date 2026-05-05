@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { searchMovies, getMovieDetails } from './services/api';
+import { omdbApi, API_KEY } from './services/api';
 import SearchBar from './components/SearchBar';
 import MovieList from './components/MovieList';
 import MovieDetail from './components/MovieDetail';
@@ -9,67 +9,93 @@ import './App.css';
 
 function App() {
   const [movies, setMovies] = useState([]);
-  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [movieDetail, setMovieDetail] = useState(null);
+  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    handleSearch('Avengers'); 
-  }, []); 
-
-  const handleSearch = async (title) => {
+  const handleSearch = async (query) => {
     setLoading(true);
     setError(null);
-    setSelectedMovie(null);
-
+    setSelectedMovieId(null); 
+    
     try {
-      const data = await searchMovies(title);
-      if (data.Response === "True") {
-        setMovies(data.Search);
-      } else {
+      const response = await omdbApi.get(`?s=${query}&apikey=${API_KEY}`);
+      
+      if (response.data.Response === 'False') {
         setMovies([]);
-        setError(data.Error === "Movie not found!" ? "No se encontraron coincidencias." : data.Error);
+        setError(response.data.Error === "Movie not found!" ? "No se encontraron resultados para tu búsqueda." : response.data.Error);
+      } else {
+        setMovies(response.data.Search);
       }
     } catch (err) {
-      setError("Ocurrió un error al consultar la API.");
+      setError('Ocurrió un error al conectar con la API.');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSelectMovie = async (id) => {
-    setLoading(true);
-    try {
-      const data = await getMovieDetails(id);
-      setSelectedMovie(data);
-      window.scrollTo(0, 0);
-    } catch (err) {
-      setError("Error al obtener el detalle.");
-    } finally {
-      setLoading(false);
-    }
+  const handleClear = () => {
+    setMovies([]);
+    setError(null);
+    setSelectedMovieId(null);
   };
 
-  return (
+  useEffect(() => {
+    if (!selectedMovieId) return;
+
+    const fetchMovieDetail = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await omdbApi.get(`?i=${selectedMovieId}&apikey=${API_KEY}`);
+        setMovieDetail(response.data);
+      } catch (err) {
+        setError('Ocurrió un error al cargar los detalles de la película.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovieDetail();
+  }, [selectedMovieId]);
+
+return (
     <div className="app-container">
       <header>
-        <h1>🎬 Movie App</h1>
-        <SearchBar onSearch={handleSearch} />
+        <div className="header-content">
+          <h1>Buscador</h1>
+          {!selectedMovieId && (
+            <SearchBar onSearch={handleSearch} onClear={handleClear} />
+          )}
+        </div>
       </header>
-
+      
       <main>
+        {!selectedMovieId && !loading && !error && (
+            <h2 className="section-title">Películas</h2>
+        )}
+
         {loading && <Loader />}
         
         {error && !loading && <ErrorMessage message={error} />}
 
-        {!loading && !error && !selectedMovie && (
-          <MovieList movies={movies} onSelect={handleSelectMovie} />
+        {!selectedMovieId && !loading && !error && movies.length > 0 && (
+          <MovieList movies={movies} onSelectMovie={setSelectedMovieId} />
         )}
 
-        {!loading && selectedMovie && (
+        {selectedMovieId && movieDetail && !loading && !error && (
           <MovieDetail 
-            movie={selectedMovie} 
-            onBack={() => setSelectedMovie(null)} 
+            movie={movieDetail} 
+            onBack={() => {
+              setSelectedMovieId(null);
+              setMovieDetail(null);
+            }} 
           />
         )}
       </main>

@@ -1,25 +1,37 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const SearchBar = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
+const SearchBar = ({ onSearch, onClear }) => {
+  const [inputValue, setInputValue] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (query.trim()) {
-      onSearch(query);
+  const handleSearch = () => {
+    if (inputValue.trim()) {
+      onSearch(inputValue);
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleClear = () => {
+    setInputValue('');
+    onClear();
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="search-bar">
+    <div className="search-bar">
       <input
         type="text"
         placeholder="Buscar película o serie..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
-      <button type="submit">Buscar</button>
-    </form>
+      <button onClick={handleSearch}>Buscar</button>
+      <button onClick={handleClear} className="clear-btn">Limpiar</button>
+    </div>
   );
 };
 

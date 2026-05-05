@@ -1,23 +1,15 @@
-import React from 'react';
-
 const MovieCard = ({ movie, onSelect }) => {
-  const placeholder = "https://via.placeholder.com/300x450?text=Sin+Imagen";
+  const posterUrl = movie.Poster !== 'N/A' 
+    ? movie.Poster 
+    : 'https://via.placeholder.com/300x450?text=Sin+Imagen';
 
   return (
     <div className="movie-card" onClick={() => onSelect(movie.imdbID)}>
-      <div className="poster-container">
-        <img 
-          src={movie.Poster !== "N/A" ? movie.Poster : placeholder} 
-          alt={movie.Title} 
-          className="movie-poster"
-        />
-      </div>
-      <div className="movie-info">
+      <img src={posterUrl} alt={`Póster de ${movie.Title}`} />
+      <div className="movie-card-info">
         <h3>{movie.Title}</h3>
-        <div className="movie-meta">
-          <span className="year">{movie.Year}</span>
-          <span className="type-badge">{movie.Type.toUpperCase()}</span>
-        </div>
+        <p><strong>Año:</strong> {movie.Year}</p>
+        <p><strong>Tipo:</strong> {movie.Type}</p>
       </div>
     </div>
   );

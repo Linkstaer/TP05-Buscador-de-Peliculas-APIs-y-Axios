@@ -1,41 +1,26 @@
-import React from 'react';
-
 const MovieDetail = ({ movie, onBack }) => {
-  const placeholder = "https://via.placeholder.com/300x450?text=Sin+Imagen";
-
-  const renderData = (data) => (data && data !== "N/A" ? data : "No disponible");
+  const posterUrl = movie.Poster !== 'N/A' 
+    ? movie.Poster 
+    : 'https://via.placeholder.com/300x450?text=Sin+Imagen';
 
   return (
-    <div className="movie-detail-overlay">
-      <div className="movie-detail-container">
-        <button className="back-button" onClick={onBack}>
-          ← Volver
-        </button>
-
-        <div className="detail-content">
-          <div className="detail-poster">
-            <img 
-              src={movie.Poster !== "N/A" ? movie.Poster : placeholder} 
-              alt={movie.Title} 
-            />
-          </div>
-
-          <div className="detail-info">
-            <h2>{movie.Title} ({movie.Year})</h2>
-            <p className="plot"><strong>Sinopsis:</strong> {renderData(movie.Plot)}</p>
-            
-            <div className="info-grid">
-              <p><strong>Director:</strong> {renderData(movie.Director)}</p>
-              <p><strong>Actores:</strong> {renderData(movie.Actors)}</p>
-              <p><strong>Género:</strong> {renderData(movie.Genre)}</p>
-              <p><strong>Duración:</strong> {renderData(movie.Runtime)}</p>
-              <p><strong>Idioma:</strong> {renderData(movie.Language)}</p>
-              <p><strong>País:</strong> {renderData(movie.Country)}</p>
-              <p className="rating">
-                <strong>Puntaje IMDb:</strong> ⭐ {renderData(movie.imdbRating)}
-              </p>
-            </div>
-          </div>
+    <div className="movie-detail">
+      <button className="back-btn" onClick={onBack}>⬅ Volver a la lista</button>
+      <div className="detail-container">
+        <img src={posterUrl} alt={`Póster de ${movie.Title}`} className="detail-poster" />
+        
+        <div className="detail-info">
+          <h2>{movie.Title} ({movie.Year})</h2>
+          <p><strong>Género:</strong> {movie.Genre}</p>
+          <p><strong>Director:</strong> {movie.Director}</p>
+          <p><strong>Actores:</strong> {movie.Actors}</p>
+          <p><strong>Sinopsis:</strong> {movie.Plot}</p>
+          <p><strong>Duración:</strong> {movie.Runtime}</p>
+          <p><strong>Idioma:</strong> {movie.Language}</p>
+          <p><strong>País:</strong> {movie.Country}</p>
+          {movie.imdbRating !== 'N/A' && (
+            <p className="imdb-rating"><strong>⭐ Puntaje IMDb:</strong> {movie.imdbRating}/10</p>
+          )}
         </div>
       </div>
     </div>

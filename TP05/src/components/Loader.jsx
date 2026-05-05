@@ -1,6 +1,5 @@
-const Loader = () => (
-  <div className="loader-container">
-    <div className="spinner"></div>
-    <p>Buscando películas...</p>
-  </div>
-);
+const Loader = () => {
+  return <div className="loader">Cargando datos...</div>;
+};
+
+export default Loader;
