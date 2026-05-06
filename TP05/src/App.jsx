@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { omdbApi, API_KEY } from './services/api';
-import SearchBar from './components/SearchBar';
-import MovieList from './components/MovieList';
-import MovieDetail from './components/MovieDetail';
-import Loader from './components/Loader';
-import ErrorMessage from './components/ErrorMessage';
+import { omdbApi, API_KEY } from './api/api';
+import SearchBar from './SearchBar';
+import MovieList from './MovieList';
+import MovieDetail from './MovieDetail';
+import Loader from './Loader';
+import ErrorMessage from './ErrorMessage';
 import './App.css';
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
       
       if (response.data.Response === 'False') {
         setMovies([]);
-        setError(response.data.Error === "Movie not found!" ? "No se encontraron resultados para tu búsqueda." : response.data.Error);
+        setError(response.data.Error === "Pelicula no encontrada!" ? "No se encontraron resultados para tu búsqueda." : response.data.Error);
       } else {
         setMovies(response.data.Search);
       }
